@@ -1,15 +1,11 @@
-
 import {
-    createContext,
-    useContext,
     useEffect,
     useRef,
     useState,
 } from 'react';
 import { useLocation } from 'react-router-dom';
+import AuthContext from './auth-context';
 import api from '../../../lib/axios';
-
-const AuthContext = createContext(null);
 
 const publicAuthPages = [
     '/login',
@@ -23,43 +19,53 @@ export function AuthProvider({ children }) {
     const { pathname } = useLocation();
 
     const [user, setUser] = useState(null);
-    const [loading, setLoading] = useState(true);
+    const [checkedPathname, setCheckedPathname] = useState(null);
     const [loggingOut, setLoggingOut] = useState(false);
     const authCheckId = useRef(0);
 
+    const isPublicPage = publicAuthPages.includes(pathname);
+
+    const loading =
+        !isPublicPage && checkedPathname !== pathname;
+
     useEffect(() => {
         const checkId = ++authCheckId.current;
+        let isActive = true;
 
         if (publicAuthPages.includes(pathname)) {
-            setLoading(false);
-            return;
+            return () => {
+                isActive = false;
+            };
         }
-
-        setLoading(true);
 
         api.get('/api/user')
             .then((response) => {
-                if (authCheckId.current === checkId) {
+                if (isActive && authCheckId.current === checkId) {
                     setUser(response.data);
                 }
             })
             .catch((error) => {
-                if (authCheckId.current !== checkId) return;
+                if (!isActive || authCheckId.current !== checkId) {
+                    return;
+                }
 
                 if (error.response?.status !== 401) {
-                    console.error('Unable to verify authentication:', error);
+                    console.error(
+                        'Unable to verify authentication:',
+                        error,
+                    );
                 }
 
                 setUser(null);
             })
             .finally(() => {
-                if (authCheckId.current === checkId) {
-                    setLoading(false);
+                if (isActive && authCheckId.current === checkId) {
+                    setCheckedPathname(pathname);
                 }
             });
 
         return () => {
-            authCheckId.current++;
+            isActive = false;
         };
     }, [pathname]);
 
@@ -91,8 +97,4 @@ export function AuthProvider({ children }) {
             {children}
         </AuthContext.Provider>
     );
-}
-
-export function useAuth() {
-    return useContext(AuthContext);
 }

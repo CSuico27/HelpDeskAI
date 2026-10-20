@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { Link, useLocation, useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { OTPInput } from 'input-otp';
 import AuthLayout from '../components/AuthLayout';
 import api from '../../../lib/axios';
@@ -8,10 +8,10 @@ export default function VerifyEmailPage() {
     const location = useLocation();
     const navigate = useNavigate();
 
-    const [email, setEmail] = useState(location.state?.email || '');
+    const [email] = useState(location.state?.email || '');
     const [code, setCode] = useState('');
     const [error, setError] = useState('');
-    const [message, setMessage] = useState(location.state?.message || '');
+    // const [message, setMessage] = useState(location.state?.message || '');
     const [loading, setLoading] = useState(false);
     const [resending, setResending] = useState(false);
     const [cooldown, setCooldown] = useState(location.state?.email ? 60 : 0);
@@ -27,7 +27,7 @@ export default function VerifyEmailPage() {
     async function handleVerify(event) {
         event.preventDefault();
         setError('');
-        setMessage('');
+        // setMessage('');
 
         if (!email.trim() || code.length !== 6) {
             setError('Enter your email and six-digit verification code.');
@@ -65,7 +65,7 @@ export default function VerifyEmailPage() {
         if (cooldown > 0) return;
 
         setError('');
-        setMessage('');
+        // setMessage('');
 
         if (!email.trim()) {
             setError('Enter the email address you registered with.');
@@ -75,11 +75,11 @@ export default function VerifyEmailPage() {
         setResending(true);
 
         try {
-            const response = await api.post('/api/email/resend', {
+            await api.post('/api/email/resend', {
                 email: email.trim(),
             });
 
-            setMessage(response.data.message);
+            // setMessage(response.data.message);
             setCode('');
             setCooldown(60);
         } catch (error) {

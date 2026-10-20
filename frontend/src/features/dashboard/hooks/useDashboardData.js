@@ -1,19 +1,18 @@
-import { useState, useEffect } from "react";
-import { dashboardData } from "../mockData";
+import { useState, useEffect } from 'react';
+import { dashboardData } from '../mockData';
 
 export function useDashboardData() {
-  const [data, setData] = useState(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
+    const [data, setData] = useState(null);
+    const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
-    // Simulate a request. Later: fetch("/api/dashboard/stats")
-    const t = setTimeout(() => {
-      setData(dashboardData);
-      setLoading(false);
-    }, 500);
-    return () => clearTimeout(t);
-  }, []);
+    useEffect(() => {
+        const timer = setTimeout(() => {
+            setData(dashboardData);
+            setLoading(false);
+        }, 500);
 
-  return { data, loading, error };
+        return () => clearTimeout(timer);
+    }, []);
+
+    return { data, loading };
 }

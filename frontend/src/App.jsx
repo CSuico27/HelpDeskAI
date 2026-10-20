@@ -6,7 +6,8 @@ import RegisterPage from './features/authentication/pages/RegisterPage';
 import ForgotPasswordPage from './features/authentication/pages/ForgotPasswordPage';
 import ResetPasswordPage from './features/authentication/pages/ResetPasswordPage';
 import VerifyEmailPage from './features/authentication/pages/VerifyEmailPage';
-import { AuthProvider, useAuth } from './features/authentication/context/AuthContext';
+import { AuthProvider } from "./features/authentication/context/AuthContext";
+import { useAuth } from "./features/authentication/context/useAuth";
 
 
 function AppRoutes() {

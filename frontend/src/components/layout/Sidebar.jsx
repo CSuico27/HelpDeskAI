@@ -1,8 +1,7 @@
-import React, { useState } from "react";
 import { NavLink } from "react-router-dom";
 import { Layers } from "lucide-react";
 import { navItems } from "./navItems";
-import { useAuth } from "../../features/authentication/context/AuthContext";
+import { useAuth } from "../../features/authentication/context/useAuth";
 
 export default function Sidebar() {
   const { logout, loggingOut } = useAuth();

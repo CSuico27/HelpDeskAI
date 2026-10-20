@@ -60,23 +60,10 @@ function DashboardSkeleton() {
 }
 
 export default function DashboardPage() {
-    const { data, loading, error } = useDashboardData();
+    const { loading } = useDashboardData();
 
     if (loading) {
         return <DashboardSkeleton />;
-    }
-
-    if (error) {
-        return (
-            <div className="rounded-xl border border-red-200 bg-red-50 p-5">
-                <h2 className="font-semibold text-red-700">
-                    Unable to load dashboard
-                </h2>
-                <p className="mt-1 text-sm text-red-600">
-                    Please try refreshing the page.
-                </p>
-            </div>
-        );
     }
 
     return (
