@@ -17,7 +17,12 @@ class AuthenticationTest extends TestCase
 
     public function test_logout_invalidates_the_authenticated_session(): void
     {
+        config([
+            'sanctum.stateful' => ['localhost:5173'],
+        ]);
+
         $this->withHeader('Origin', 'http://localhost:5173')
+            ->withSession(['_token' => 'test-token'])
             ->actingAs(User::factory()->create())
             ->postJson('/api/logout')
             ->assertOk()
