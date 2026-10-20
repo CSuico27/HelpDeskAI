@@ -9,6 +9,22 @@ jobs:
     name: Laravel Tests
     runs-on: ubuntu-latest
 
+    services:
+      mysql:
+        image: mysql:8.4
+        env:
+          MYSQL_ROOT_PASSWORD: root
+          MYSQL_DATABASE: helpdesk_ai
+          MYSQL_USER: helpdesk
+          MYSQL_PASSWORD: secret
+        ports:
+          - 3306:3306
+        options: >-
+          --health-cmd="mysqladmin ping -h 127.0.0.1 -uroot -proot"
+          --health-interval=10s
+          --health-timeout=5s
+          --health-retries=10
+
     defaults:
       run:
         working-directory: backend
@@ -21,7 +37,7 @@ jobs:
         uses: shivammathur/setup-php@v2
         with:
           php-version: '8.4'
-          extensions: mbstring, pdo_sqlite, sqlite3
+          extensions: mbstring, pdo_mysql
           coverage: none
 
       - name: Install Composer dependencies
@@ -33,6 +49,17 @@ jobs:
           php artisan key:generate
 
       - name: Run Laravel tests
+        env:
+          APP_ENV: testing
+          DB_CONNECTION: mysql
+          DB_HOST: 127.0.0.1
+          DB_PORT: 3306
+          DB_DATABASE: helpdesk_ai
+          DB_USERNAME: helpdesk
+          DB_PASSWORD: secret
+          SESSION_DRIVER: file
+          CACHE_STORE: file
+          QUEUE_CONNECTION: sync
         run: php artisan test
 
   frontend-checks:
